@@ -1,42 +1,45 @@
 var map; 
 var markers = [];
-     
-function initMap() {
+
+function initMap(locations) {
+  if (!locations) {
+    locations = [];
+  }
   var styles = [
     {
       "elementType": "geometry",
       "stylers": [
-          {"hue": "#ff4400"},
-          {"saturation": -68},
-          {"lightness": -4},
-          {"gamma": 0.72}
+        {"hue": "#ff4400"},
+        {"saturation": -68},
+        {"lightness": -4},
+        {"gamma": 0.72}
       ]
     },
     {
-        "featureType": "road",
-        "elementType": "labels.icon"
+      "featureType": "road",
+      "elementType": "labels.icon"
     },
     {
       "featureType": "landscape.man_made",
       "elementType": "geometry",
       "stylers": [
-          {"hue": "#0077ff"},
-          {"gamma": 3.1}
+        {"hue": "#0077ff"},
+        {"gamma": 3.1}
       ]
     },
     {
       "featureType": "water",
       "stylers": [
-          {"hue": "#00ccff"},
-          {"gamma": 0.44},
-          {"saturation": -33}
+        {"hue": "#00ccff"},
+        {"gamma": 0.44},
+        {"saturation": -33}
       ]
     },
     {
       "featureType": "poi.park",
       "stylers": [
-          {"hue": "#44ff00"},
-          {"saturation": -23}
+        {"hue": "#44ff00"},
+        {"saturation": -23}
       ]
     },
     {
@@ -47,75 +50,67 @@ function initMap() {
           {"gamma": 0.77},
           {"saturation": 65},
           {"lightness": 99
-          }
+        }
       ]
     },
     {
       "featureType": "water",
       "elementType": "labels.text.stroke",
       "stylers": [
-          {"gamma": 0.11},
-          {"weight": 5.6},
-          {"saturation": 99},
-          {"hue": "#0091ff"},
-          {"lightness": -86}
+        {"gamma": 0.11},
+        {"weight": 5.6},
+        {"saturation": 99},
+        {"hue": "#0091ff"},
+        {"lightness": -86}
       ]
     },
     {
       "featureType": "transit.line",
       "elementType": "geometry",
       "stylers": [
-          {"lightness": -48},
-          {"hue": "#ff5e00"},
-          {"gamma": 1.2},
-          {"saturation": -23}
+        {"lightness": -48},
+        {"hue": "#ff5e00"},
+        {"gamma": 1.2},
+        {"saturation": -23}
       ]
     },
-    {
-      "featureType": "transit",
-      "elementType": "labels.text.stroke",
+  {
+    "featureType": "transit",
+    "elementType": "labels.text.stroke",
       "stylers": [
-          {"saturation": -64},
-          {"hue": "#ff9100"},
-          {"lightness": 16},
-          {"gamma": 0.47},
-          {"weight": 2.7}
-      ]
-    }
+      {"saturation": -64},
+      {"hue": "#ff9100"},
+      {"lightness": 16},
+      {"gamma": 0.47},
+    {"weight": 2.7}
+    ]
+  }
   ]
-  
+
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.768403, lng: -86.158068},
     styles: styles,
     zoom: 13,
     mapTypeControl: false
-   });
+  });
 
-  var locations = [
-    {title: "Fountain Square Cultural District", location: {lat: 39.752023, lng: -86.139582}},
-    {title: "Broad Ripple Village", location: {lat: 39.868685, lng: -86.134069}},
-    {title: "Downtown Market", location: {lat: 39.768802, lng: -86.153448}},
-    {title: "Canal & White River State Park", location: {lat: 39.766546, lng: -86.170786}},
-    {title: "Indianapolis Museum of Art", location: {lat: 39.752023, lng: -86.184802}},
-  ];
-  
   var infoWindow = new google.maps.InfoWindow();
   var boundaries = new google.maps.LatLngBounds();
   var markerIcon = "img/starmarker_blue_smaller.svg";
   var highlightedIcon = "img/starmarker_green_small.svg";
-  
+
   for (var i = 0; i < locations.length; i++) {
     var position = locations[i].location;
     var title = locations[i].title;
     var marker = new google.maps.Marker({
-        map: map,
-        position: position,
-        title: title,
-        animation: google.maps.Animation.DROP,
-        icon: markerIcon,
-        id: i
-      });
-    
+      map: map,
+      position: position,
+      title: title,
+      animation: google.maps.Animation.DROP,
+      icon: markerIcon,
+      id: i
+    });
+
     markers.push(marker);
     marker.addListener('click', function() {
       populateInfoWindow(this, infoWindow);
@@ -141,4 +136,62 @@ function populateInfoWindow(marker, infoWindow) {
     });
   }
 }
+
+$(function() {
+  var initBinding = function(locations) {
+      function AppViewModel() {
+        var self = this;
+
+        self.locations = ko.observable(locations);
+        self.location = ko.observable("");
+
+      }
+    // Activates knockout.js
+    ko.applyBindings(new AppViewModel());
+    initMap(locations);
+  };
+
+  $.ajax({
+    crossDomain: true,
+    url: "http://beermapping.com/webservice/locquery/7373f5790e4ef0675288068b4059045f/indianapolis&s=json",
+    method: 'GET',
+  })
+  .done(function(result) {
+    var beerListing = result || [];
+    console.log(beerListing);
+    var beersWithLocation = [];
+    var doneWhenBeersAre = beerListing.length;
+
+    result.forEach(function(beerLocation) {
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode(
+        {address: beerLocation.street + " " + beerLocation.city + ", " 
+                  + beerLocation.state}, 
+        function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            beerLocation.location = results[0].geometry.location;
+            beersWithLocation.push(beerLocation);
+
+            if (beersWithLocation.length == doneWhenBeersAre) {
+              mappable = beersWithLocation.map(function(located) {
+                return {
+                  "title": located.name,
+                  "location": located.location
+                }
+              });
+
+              initBinding(mappable);
+            }
+          } else {
+            window.alert('We could not find that location - try entering a more' +
+              ' specific place.');
+          }
+        });
+    })
+  })
+  .fail(function(err) {
+    var failMessage = $("#nytimes-header");
+    failMessage.text ("New York Times Articles Could Not Be Loaded");
+  });
+});
 
