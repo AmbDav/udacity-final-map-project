@@ -100,12 +100,14 @@ function initMap(locations) {
   var highlightedIcon = "img/starmarker_green_small.svg";
 
   for (var i = 0; i < locations.length; i++) {
+    var beerLocation = locations[i];
     var position = locations[i].location;
     var title = locations[i].title;
     var marker = new google.maps.Marker({
       map: map,
       position: position,
       title: title,
+      locationDetails: beerLocation,
       animation: google.maps.Animation.DROP,
       icon: markerIcon,
       id: i
@@ -129,7 +131,13 @@ function initMap(locations) {
 function populateInfoWindow(marker, infoWindow) {
   if (infoWindow.marker != marker) {
     infoWindow.marker = marker;
-    infoWindow.setContent("<div>" + marker.title + "</div>");
+    infoWindow.setContent('<div><h3>'+marker.title+'</h3>'+
+  '<a href="'+marker.locationDetails.url+'"><span>'+marker.locationDetails.url+'</span></a>'+
+  '<h4>Address</h4>' +
+  '<p>'+marker.locationDetails.address.street+' '+
+        marker.locationDetails.address.city+' '+
+        marker.locationDetails.address.state+' '+
+        marker.locationDetails.address.zip+'</p></div>');
     infoWindow.open(map, marker);
     infoWindow.addListener('closeclick', function() {
       infoWindow.setMarker = null;
@@ -151,6 +159,25 @@ $(function() {
     initMap(locations);
   };
 
+function loadWikipedia(city, $wikiElem) {
+    var wikiRequestTimeout = setTimeout(function(){
+        $wikiElem.text("Failed To Get Wikipedia Resources");
+    }, 8000);
+    var playListURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + 
+        city + '&format=json&callback=wikiCallback';
+    $.ajax({
+        url: playListURL,
+        dataType: "jsonp",
+        success: function(response) {
+            var wikiBaseURL = 'http://en.wikipedia.org/wiki/';
+            var wikiArticles = response[1] ||[];
+            wikiArticles.forEach(function(article){
+                $wikiElem.append('<li><a target="_blank" href="' + wikiBaseURL + article + '">'+article+'</a></li>');
+            });
+            clearTimeout(wikiRequestTimeout);
+        }
+    });
+}
   $.ajax({
     crossDomain: true,
     url: "http://beermapping.com/webservice/locquery/7373f5790e4ef0675288068b4059045f/indianapolis&s=json",
@@ -176,15 +203,19 @@ $(function() {
               mappable = beersWithLocation.map(function(located) {
                 return {
                   "title": located.name,
-                  "location": located.location
+                  "location": located.location,
+                  "address": {street: located.street,
+                              city: located.city,
+                              state: located.state,
+                              zip: located.zip},
+                  "url": located.url
                 }
               });
 
               initBinding(mappable);
             }
           } else {
-            window.alert('We could not find that location - try entering a more' +
-              ' specific place.');
+            window.alert("We can't get the Indy beers at this time");
           }
         });
     })
