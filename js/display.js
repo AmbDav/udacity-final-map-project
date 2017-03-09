@@ -152,32 +152,28 @@ $(function() {
 
         self.locations = ko.observable(locations);
         self.location = ko.observable("");
+        self.filteredList = ko.computed(function () {
+            var filter = self.location(),
+                arr = [];
+            if (filter) {
+                ko.utils.arrayForEach(self.locations(), function (item) {
+                    if (item.title.includes(filter)) {
+                        arr.push(item);
+                    }
 
+                });
+            } else {
+                arr = self.locations();
+            }
+            return arr;
+
+        });
       }
     // Activates knockout.js
     ko.applyBindings(new AppViewModel());
     initMap(locations);
   };
 
-function loadWikipedia(city, $wikiElem) {
-    var wikiRequestTimeout = setTimeout(function(){
-        $wikiElem.text("Failed To Get Wikipedia Resources");
-    }, 8000);
-    var playListURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + 
-        city + '&format=json&callback=wikiCallback';
-    $.ajax({
-        url: playListURL,
-        dataType: "jsonp",
-        success: function(response) {
-            var wikiBaseURL = 'http://en.wikipedia.org/wiki/';
-            var wikiArticles = response[1] ||[];
-            wikiArticles.forEach(function(article){
-                $wikiElem.append('<li><a target="_blank" href="' + wikiBaseURL + article + '">'+article+'</a></li>');
-            });
-            clearTimeout(wikiRequestTimeout);
-        }
-    });
-}
   $.ajax({
     crossDomain: true,
     url: "http://beermapping.com/webservice/locquery/7373f5790e4ef0675288068b4059045f/indianapolis&s=json",
