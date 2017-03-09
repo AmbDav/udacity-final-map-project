@@ -24,7 +24,7 @@
       margin: 0;
     }
     li:hover {
-      background-color: black;
+      background-color: #215d0f;
     }
     footer {
       position: absolute;
@@ -33,6 +33,7 @@
       background-color: #166f86;
       margin: 8px;
       padding: 10px;
+      display: inline-flex;
 
     }
   </style>
@@ -42,18 +43,19 @@
     <section id="search">
       <p>Location Search:
         <input data-bind='value: location, valueUpdate: "afterkeydown"'/>
-
+        <span data-bind="click: toggleList"> &#10046;</span>
       </p>
-      <ul data-bind="foreach: filteredList">
+      <ul data-bind="foreach: filteredList, visible: visibleLocations">
         <li><span data-bind="text: title, click: $parent.selectEntry"></span></li>
       </ul>
     </section>
   </div>
-  <div id="map" class="col-9">
+  <div id="map">
   </div>
   <footer>
-    <p>Icons made by <a href="http://www.flaticon.com/authors/metropolicons" title="Metropolicons">Metropolicons</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+    <p>Icons made by <a href="http://www.flaticon.com/authors/metropolicons" title="Metropolicons">Metropolicons</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY </a>
     </p>
+    <p>Data provided by <a href="https://beermapping.com">The Beer Mapping Project</a></p>
   </footer>
   <script async defer 
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn2Wk7iXY24mA15s4S3z97zPU86I6ZJbo&v=3&callback=initMap">

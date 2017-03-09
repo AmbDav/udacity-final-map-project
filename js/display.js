@@ -5,6 +5,8 @@ function initMap(locations) {
   if (!locations) {
     locations = [];
   }
+
+  //Stylizing the map
   var styles = [
     {
       "elementType": "geometry",
@@ -87,10 +89,11 @@ function initMap(locations) {
   }
   ]
 
+  //Loading the map with markers and infoWindows
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.768403, lng: -86.158068},
     styles: styles,
-    zoom: 13,
+    //zoom: 13,
     mapTypeControl: false
   });
 
@@ -144,15 +147,20 @@ function populateInfoWindow(marker, infoWindow) {
     });
   }
 }
-
+//Using knockout to display the list of data points. 
+//This includes creating the click function on the flower symbol and 
+//the text filtering option
 $(function() {
   var initBinding = function(locations) {
       function AppViewModel() {
         var self = this;
-
+        self.visibleLocations = ko.observable(false);
         self.locations = ko.observable(locations);
         self.selectEntry = function(location) {
           new google.maps.event.trigger(location.marker, 'click');
+        };
+        self.toggleList = function() {
+          self.visibleLocations(!self.visibleLocations());
         };
         self.location = ko.observable("");
         self.filteredList = ko.computed(function () {
@@ -163,20 +171,21 @@ $(function() {
                     if (item.title.includes(filter)) {
                         arr.push(item);
                     }
-
                 });
             } else {
                 arr = self.locations();
             }
+            initMap(arr);
             return arr;
-
         });
       }
     // Activates knockout.js
     ko.applyBindings(new AppViewModel());
     initMap(locations);
   };
-
+  //Linking in the data from beermapping.com. The data does not come with
+  //longitude and latitude but rather actual addresses. As a result geocoding 
+  //had to be implemented for google maps to read it. 
   $.ajax({
     crossDomain: true,
     url: "http://beermapping.com/webservice/locquery/7373f5790e4ef0675288068b4059045f/indianapolis&s=json",
@@ -210,7 +219,6 @@ $(function() {
                   "url": located.url
                 }
               });
-
               initBinding(mappable);
             }
           } else {
@@ -220,8 +228,8 @@ $(function() {
     })
   })
   .fail(function(err) {
-    var failMessage = $("#nytimes-header");
-    failMessage.text ("New York Times Articles Could Not Be Loaded");
+    initMap();
+    alert("We can't get the Indy beers at this time");
   });
 });
 
