@@ -87,20 +87,25 @@ function initMap(locations) {
     {"weight": 2.7}
     ]
   }
-  ]
+  ];
 
   //Loading the map with markers and infoWindows
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 39.768403, lng: -86.158068},
+    center: new google.maps.LatLng(39.768403, -86.158068),
+    //center: {lat: 39.768403, lng: -86.158068},
     styles: styles,
-    //zoom: 13,
+    useCurrentLocation: true,
+    zoom: 3,
     mapTypeControl: false
   });
+
 
   var infoWindow = new google.maps.InfoWindow();
   var boundaries = new google.maps.LatLngBounds();
   var markerIcon = "img/starmarker_blue_smaller.svg";
   var highlightedIcon = "img/starmarker_green_small.svg";
+
+  boundaries.extend({lat: 39.768403, lng: -86.158068});
 
   for (var i = 0; i < locations.length; i++) {
     var beerLocation = locations[i];
@@ -129,7 +134,9 @@ function initMap(locations) {
     boundaries.extend(markers[i].position);
   }
   map.fitBounds(boundaries);
-};
+
+  map.setZoom(12);
+}
 
 function populateInfoWindow(marker, infoWindow) {
   if (infoWindow.marker != marker) {
@@ -217,7 +224,7 @@ $(function() {
                               state: located.state,
                               zip: located.zip},
                   "url": located.url
-                }
+                };
               });
               initBinding(mappable);
             }
@@ -225,7 +232,7 @@ $(function() {
             window.alert("We can't get the Indy beers at this time");
           }
         });
-    })
+    });
   })
   .fail(function(err) {
     initMap();

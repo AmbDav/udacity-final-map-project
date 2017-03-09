@@ -1,67 +1,38 @@
-<!-- This is the corresponding "starter code" for 04_Hello Map in Udacity and Google's Maps
-  API Course, Lesson 1 -->
   <html>
-  <head>
-   <!-- styles put here, but you can include a CSS file and reference it instead! -->
-   <style type="text/css">
-    html, body { height: 100%; margin: 0; padding: 0; }
-    #map { 
-      height: 100%;
-    }
-    .nav {
-      position: absolute;
-      margin: 8px;
-      z-index: 1;
-      background-color: #166f86;
-      color: white;
-      font-size: 1.25em;
-      padding: 10px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-    li:hover {
-      background-color: #215d0f;
-    }
-    footer {
-      position: absolute;
-      bottom: 5px;
-      color: white;
-      background-color: #166f86;
-      margin: 8px;
-      padding: 10px;
-      display: inline-flex;
-
-    }
-  </style>
-</head>
-<body>
-  <div class="nav">
-    <section id="search">
-      <p>Location Search:
-        <input data-bind='value: location, valueUpdate: "afterkeydown"'/>
-        <span data-bind="click: toggleList"> &#10046;</span>
+    <head>
+     <style type="text/css">
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; }
+      .nav { position: absolute; margin: 8px; z-index: 1;     background-color: #166f86; color: white; font-size: 1.25em; padding: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+      ul { list-style-type: none; padding: 0; margin: 0; }
+      li:hover { background-color: #215d0f; }
+      footer { position: absolute; bottom: 5px; color: white;     background-color: #166f86; margin: 8px; padding: 10px;      display: inline-flex; }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <section id="search">
+        <p>Location Search:
+          <input data-bind='value: location, valueUpdate: "afterkeydown"'/>
+          <span data-bind="click: toggleList"> &#10046;</span>
+        </p>
+        <ul data-bind="foreach: filteredList, visible: visibleLocations">
+          <li><span data-bind="text: title, click: $parent.selectEntry"></span></li>
+        </ul>
+      </section>
+    </div>
+    <div id="map">
+    </div>
+    <footer>
+      <p>Icons made by <a href="http://www.flaticon.com/authors/metropolicons" title="Metropolicons">Metropolicons</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY </a>
       </p>
-      <ul data-bind="foreach: filteredList, visible: visibleLocations">
-        <li><span data-bind="text: title, click: $parent.selectEntry"></span></li>
-      </ul>
-    </section>
-  </div>
-  <div id="map">
-  </div>
-  <footer>
-    <p>Icons made by <a href="http://www.flaticon.com/authors/metropolicons" title="Metropolicons">Metropolicons</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY </a>
-    </p>
-    <p>Data provided by <a href="https://beermapping.com">The Beer Mapping Project</a></p>
-  </footer>
-  <script async defer 
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn2Wk7iXY24mA15s4S3z97zPU86I6ZJbo&v=3&callback=initMap">
-  </script>
-  <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-  <script async defer src="bower_components/knockout/dist/knockout.js"></script>
-  <script async defer src="js/display.js"></script>
-</body>
+      <p>Data provided by <a href="https://beermapping.com">The Beer Mapping Project</a></p>
+    </footer>
+    <script async defer 
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn2Wk7iXY24mA15s4S3z97zPU86I6ZJbo&v=3&callback=initMap">
+    </script>
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script async defer src="bower_components/knockout/dist/knockout.js"></script>
+    <script async defer src="js/display.js"></script>
+  </body>
 </html>
