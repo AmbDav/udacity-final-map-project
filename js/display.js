@@ -112,7 +112,7 @@ function initMap(locations) {
       icon: markerIcon,
       id: i
     });
-
+    beerLocation.marker = marker;
     markers.push(marker);
     marker.addListener('click', function() {
       populateInfoWindow(this, infoWindow);
@@ -151,6 +151,9 @@ $(function() {
         var self = this;
 
         self.locations = ko.observable(locations);
+        self.selectEntry = function(location) {
+          new google.maps.event.trigger(location.marker, 'click');
+        };
         self.location = ko.observable("");
         self.filteredList = ko.computed(function () {
             var filter = self.location(),
