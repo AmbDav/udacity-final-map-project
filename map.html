@@ -1,13 +1,10 @@
+  <!DOCTYPE html>
   <html>
     <head>
-     <style type="text/css">
-      html, body { height: 100%; margin: 0; padding: 0; }
-      #map { height: 100%; }
-      .nav { position: absolute; margin: 8px; z-index: 1;     background-color: #166f86; color: white; font-size: 1.25em; padding: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
-      ul { list-style-type: none; padding: 0; margin: 0; }
-      li:hover { background-color: #215d0f; }
-      footer { position: absolute; bottom: 5px; color: white;     background-color: #166f86; margin: 8px; padding: 10px;      display: inline-flex; }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Map Project</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
   </head>
   <body>
     <div class="nav">
@@ -28,11 +25,11 @@
       </p>
       <p>Data provided by <a href="https://beermapping.com">The Beer Mapping Project</a></p>
     </footer>
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/knockout/dist/knockout.js"></script>
+    <script async defer src="js/display.js"></script>
     <script async defer 
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCn2Wk7iXY24mA15s4S3z97zPU86I6ZJbo&v=3&callback=initMap">
     </script>
-    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script async defer src="bower_components/knockout/dist/knockout.js"></script>
-    <script async defer src="js/display.js"></script>
   </body>
 </html>

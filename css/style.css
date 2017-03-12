@@ -1,0 +1,35 @@
+html, body { 
+	height: 100%; 
+	margin: 0; 
+	padding: 0; 
+}
+
+#map { 
+	height: 100%; 
+}
+
+.nav { 
+	position: absolute; 
+	margin: 8px; z-index: 1;
+	background-color: #166f86; 
+	color: white; 
+	font-size: 1.25em; 
+	padding: 10px; 
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+ul { 
+	list-style-type: none; 
+	padding: 0; margin: 0; 
+}
+li:hover { 
+	background-color: #215d0f; 
+}
+
+footer { 
+	position: absolute; 
+	bottom: 5px; 
+	color: white;     
+	background-color: #166f86; 
+	margin: 8px; 
+	padding: 10px;      
+	display: inline-flex; 
+}

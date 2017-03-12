@@ -1,5 +1,6 @@
 var map; 
 var markers = [];
+var lastClicked;
 
 function initMap(locations) {
   if (!locations) {
@@ -90,15 +91,16 @@ function initMap(locations) {
   ];
 
   //Loading the map with markers and infoWindows
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: new google.maps.LatLng(39.768403, -86.158068),
-    //center: {lat: 39.768403, lng: -86.158068},
-    styles: styles,
-    useCurrentLocation: true,
-    zoom: 3,
-    mapTypeControl: false
-  });
-
+  if (!map) {
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: new google.maps.LatLng(39.768403, -86.158068),
+      //center: {lat: 39.768403, lng: -86.158068},
+      styles: styles,
+      useCurrentLocation: true,
+      zoom: 3,
+      mapTypeControl: false
+    });
+  }
 
   var infoWindow = new google.maps.InfoWindow();
   var boundaries = new google.maps.LatLngBounds();
@@ -106,35 +108,49 @@ function initMap(locations) {
   var highlightedIcon = "img/starmarker_green_small.svg";
 
   boundaries.extend({lat: 39.768403, lng: -86.158068});
+  if (!markers || !markers[0]) {
+    markers = [];
+    for (var i = 0; i < locations.length; i++) {
+      var beerLocation = locations[i];
+      var position = locations[i].location;
+      var title = locations[i].title;
+      var marker = new google.maps.Marker({
+        map: map,
+        position: position,
+        title: title,
+        locationDetails: beerLocation,
+        animation: google.maps.Animation.DROP,
+        icon: markerIcon,
+        id: i
+      });
+      beerLocation.marker = marker;
+      markers.push(marker);
+      marker.addListener('click', function() {
+        if (lastClicked) {
+          lastClicked.setIcon(markerIcon);
+        }
+        populateInfoWindow(this, infoWindow);
+        this.setIcon(highlightedIcon);
+        lastClicked = this;
 
-  for (var i = 0; i < locations.length; i++) {
-    var beerLocation = locations[i];
-    var position = locations[i].location;
-    var title = locations[i].title;
-    var marker = new google.maps.Marker({
-      map: map,
-      position: position,
-      title: title,
-      locationDetails: beerLocation,
-      animation: google.maps.Animation.DROP,
-      icon: markerIcon,
-      id: i
+      });
+      marker.addListener('mouseover', function() {
+        this.setIcon(highlightedIcon);
+      });
+      marker.addListener('mouseout', function() {
+        this.setIcon(markerIcon);
+      });
+      boundaries.extend(markers[i].position);
+    }
+  } else {
+    var visibleMarkers = locations.map(function(location) {
+      return location.marker;
     });
-    beerLocation.marker = marker;
-    markers.push(marker);
-    marker.addListener('click', function() {
-      populateInfoWindow(this, infoWindow);
+    markers.forEach(function(marker) {
+      marker.setVisible(visibleMarkers.includes(marker));
     });
-    marker.addListener('mouseover', function() {
-      this.setIcon(highlightedIcon);
-    });
-    marker.addListener('mouseout', function() {
-      this.setIcon(markerIcon);
-    });
-    boundaries.extend(markers[i].position);
   }
   map.fitBounds(boundaries);
-
   map.setZoom(12);
 }
 
@@ -161,7 +177,7 @@ $(function() {
   var initBinding = function(locations) {
       function AppViewModel() {
         var self = this;
-        self.visibleLocations = ko.observable(false);
+        self.visibleLocations = ko.observable(true);
         self.locations = ko.observable(locations);
         self.selectEntry = function(location) {
           new google.maps.event.trigger(location.marker, 'click');

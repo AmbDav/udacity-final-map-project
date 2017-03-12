@@ -9,7 +9,7 @@ To start using the map open the map.html file.
 
 The map prepopulates the locations found by beermapping.com. Clicking on the markers populated will give the name, address and url for that location.
 
-There is a corresponding listing to the left that is filterable. To see the list click on the flower and click the flower again remove it. Each item in the list is clickable and will populate the same information that clicking on the marker does.
+There is a corresponding listing to the left that is filterable. To see the list click on the flower and click the flower again to remove it. Each item in the list is clickable and will populate the same information that clicking on the marker does.
 
 The search bar allows for filtering the list of known locations This will work whether the list is showing or not. If while filtering you want to see the list clicking the flower will populate the filtered list.
 
