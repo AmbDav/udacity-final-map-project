@@ -174,6 +174,7 @@ function populateInfoWindow(marker, infoWindow) {
 //This includes creating the click function on the flower symbol and 
 //the text filtering option
 $(function() {
+  
   var initBinding = function(locations) {
       function AppViewModel() {
         var self = this;
@@ -215,6 +216,13 @@ $(function() {
     method: 'GET',
   })
   .done(function(result) {
+    try {
+      var huh = google.maps.Marker;
+      console.log(huh)
+    } catch(err) {
+      alert("Cannot get the map right now.");
+      return;
+    }
     var beerListing = result || [];
     console.log(beerListing);
     var beersWithLocation = [];
