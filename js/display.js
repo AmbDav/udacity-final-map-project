@@ -158,7 +158,7 @@ function populateInfoWindow(marker, infoWindow) {
   if (infoWindow.marker != marker) {
     infoWindow.marker = marker;
     infoWindow.setContent('<div><h3>'+marker.title+'</h3>'+
-  '<a href="'+marker.locationDetails.url+'"><span>'+marker.locationDetails.url+'</span></a>'+
+  '<a href="'+marker.locationDetails.url+'" target="_blank"><span>'+marker.locationDetails.url+'</span></a>'+
   '<h4>Address</h4>' +
   '<p>'+marker.locationDetails.address.street+' '+
         marker.locationDetails.address.city+' '+
@@ -192,7 +192,7 @@ $(function() {
                 arr = [];
             if (filter) {
                 ko.utils.arrayForEach(self.locations(), function (item) {
-                    if (item.title.includes(filter)) {
+                    if (item.title.toLowerCase().includes(filter.toLowerCase())) {
                         arr.push(item);
                     }
                 });
@@ -216,13 +216,6 @@ $(function() {
     method: 'GET',
   })
   .done(function(result) {
-    try {
-      var huh = google.maps.Marker;
-      console.log(huh)
-    } catch(err) {
-      alert("Cannot get the map right now.");
-      return;
-    }
     var beerListing = result || [];
     console.log(beerListing);
     var beersWithLocation = [];
@@ -247,7 +240,7 @@ $(function() {
                               city: located.city,
                               state: located.state,
                               zip: located.zip},
-                  "url": located.url
+                  "url": unescape("//" + located.url)
                 };
               });
               initBinding(mappable);
@@ -263,4 +256,8 @@ $(function() {
     alert("We can't get the Indy beers at this time");
   });
 });
+
+function mapFailure() {
+  alert("Couldn't load the map library!");
+}
 
